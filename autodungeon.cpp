@@ -1,8 +1,16 @@
 #include <iostream>
 #include <stdlib.h>
-
+#include <fstream>
+#include <string>
+#include <vector>
 using namespace std;
-string civloot [50] = {
+void load ();
+void newgame ();
+void loadloot ();
+string pathstr;
+int i;
+int main ();
+string loot1 [50] = {
 "5 g",
 "5 g",
 "5 g",
@@ -54,7 +62,7 @@ string civloot [50] = {
 "Earring",
 "Earring",
 };
-string milloot [50] = {
+string loot2 [50] = {
 "Belt Buckle",
 "5g",
 "5g",
@@ -106,10 +114,50 @@ string milloot [50] = {
 "Torch",
 "Torch",
 };
-void load () {
-	
+string loot3 [50];
+void loadloot () {
+	cout << "Please enter a complete path to Loot Table 1: ";
+	cin >> pathstr;
+	ifstream loadloot;
+	loadloot.open(pathstr.c_str(), ios::in);
+	if (loadloot.is_open()) {
+		string word;
+		i=0;
+		while (getline (loadloot,word)) {
+			loot1 [i] = word;
+			i++;
+		}
+	loadloot.close();
+	cout << "Loot table loaded successfully.\n Check it?\n";
+	cin >> pathstr;
+	if (pathstr == "y") {
+		i=0;
+		for (int i=0;i<=50;i++) {
+			cout << loot1[i] << endl;
+		};
+	}
+	cout << loot1 [1];
+	} else {
+		cout << "Load failed.  Returning to main menu.";
+		main();
+	}
 }
-class playerchar {
+void load () {
+	cout << "Please enter a complete path to the save file.\n";
+	string path;
+	cin >> path;
+	ifstream load;
+	load.open (path.c_str(), ios::in);
+	if (load.is_open()) {
+		string line;
+		while ( getline (load,line) )
+    	{
+   			cout << line << '\n';
+  	    }
+    load.close();
+	}
+}
+class playerchar (int, int, int, int, int, int, int, int, int, int, int, int, int, int, int){
 	public:
 		int race, att, def, ini, intl, hp, xp;
 		int ability [6];
@@ -118,17 +166,46 @@ class playerchar {
 		string inv [50];
 		int invnum [50];
 };
+playerchar::playerchar (int rac, int at, int de, int in, int inl, int hP, int xP, int ab1, int ab2, int ab3, int ab4, int ab5, int ab6, int cla, int batt) {
+	race = rac; att = at; def = de; ini = in; intl = inl; hp = hP; xp = xP; ability [1] = ab1; ability [2] = ab2; ability [3] = ab3; ability [4] = ab4; ability [5] = ab5;
+}
+void initswitch (int response) {
+	switch (response) {
+		case 1: load(); break;
+		case 2: newgame(); break;
+		case 3: loadloot(); break;
+		default: cout << "Value out of range.  Enter number between 1 and 3.\n"; cin >> response; initswitch (response); break;
+	}
+}
+void newgame () {
+	vector<playerchar> player;
+	player.clear();
+	cout << "Enter \"new\" to create a new player and \"done\" to finish player creation.\n";
+	cin >> pathstr;
+	if (pathstr == "new") {
+		player.push_back();
+		cout << "Enter \"file\" to load character from a .txt file or \"manual\" to build character in-terminal.\n";
+		cin >> pathstr;
+		if (pathstr == "file") {
+			cout << "Enter file path: ";
+			cin >> pathstr;
+			ifstream loadchar (pathstr.c_str(), ios::in);
+			if (loadchar.is_open()) {
+				cout << "File opened successfully.  Reading...\n";
+				string line;
+				for (int i=0; i<=115; i++) {
+					getline(loadchar, player[player.size()].race);
+				}
+			}
+		}
+	} else {
+		
+	}
+}
 int main () {
-	cout << "Welcome to AutoDungeon!\n 1 Load a save file.\n 2 New game.\n 3 Load loot tables.";
+	cout << "Welcome to AutoDungeon!\n 1 Load a save file.\n 2 New game.\n 3 Load loot tables.\n";
 	int resp;
 	cin >> resp;
-	switch (resp) {
-		case 1:
-			load();
-		case 2:
-			newgame();
-		case 3:
-			loadloot();
-	}
+	initswitch(resp);
 	return 0;
 }
